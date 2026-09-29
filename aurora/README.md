@@ -1,5 +1,12 @@
 # RFdiffusion IDP co-diffusion on Aurora XPU
 
+Clone the Aurora port and enter its checkout:
+
+```bash
+git clone https://github.com/moeenmeigooni/RFdiffusionIDP-Aurora.git
+cd RFdiffusionIDP-Aurora
+```
+
 This is the paper-era implementation for Liu *et al.*, *Nature* (2025),
 “Diffusing protein binders to intrinsically disordered proteins”.  The active
 checkout is pinned to RFdiffusion commit `909fc01c032d6e3697a6b50fbb0121abfe007755`
