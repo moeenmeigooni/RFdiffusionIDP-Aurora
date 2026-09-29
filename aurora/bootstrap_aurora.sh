@@ -9,7 +9,11 @@ env_root=${RFDIFFUSION_IDP_AURORA_ENV:-${project_root}/envs/rfdiffusion-idp-auro
 cache_root=${RFDIFFUSION_IDP_CACHE_ROOT:-${project_root}/cache/rfdiffusion-idp-aurora}
 weights=0
 
-if [[ ${1:-} == "--weights" ]]; then
+if [[ ${1:-} == "-h" || ${1:-} == "--help" ]]; then
+    printf 'Usage: aurora/install_aurora.sh [--weights]\n'
+    printf 'Install RFdiffusion IDP on Aurora; --weights downloads and verifies its checkpoints.\n'
+    exit 0
+elif [[ ${1:-} == "--weights" ]]; then
     weights=1
 elif [[ $# -gt 0 ]]; then
     echo "Usage: $0 [--weights]" >&2

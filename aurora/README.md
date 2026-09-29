@@ -98,4 +98,4 @@ that same project cache root.  It also sets `PYTHONNOUSERSITE=1`; no runtime
 cache is intentionally written to the user home directory.
 
 To recreate the environment, use
-`bash aurora/bootstrap_aurora.sh --weights` from the active checkout.
+`bash aurora/install_aurora.sh --weights` from the active checkout.

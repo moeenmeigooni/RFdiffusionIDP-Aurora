@@ -18,7 +18,7 @@ mkdir -p "$AURORA_PROJECT_ROOT"
 cd "$AURORA_PROJECT_ROOT"
 git clone https://github.com/moeenmeigooni/RFdiffusionIDP-Aurora.git
 cd RFdiffusionIDP-Aurora
-bash aurora/bootstrap_aurora.sh --weights
+bash aurora/install_aurora.sh --weights
 ```
 
 For the three-mode XPU smoke job and a bounded design example, see
