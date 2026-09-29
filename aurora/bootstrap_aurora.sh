@@ -16,8 +16,9 @@ elif [[ $# -gt 0 ]]; then
     exit 2
 fi
 
+frameworks_module="${AURORA_FRAMEWORKS_MODULE:-frameworks}"
 set +u
-module load frameworks/2025.3.1
+module load "${frameworks_module}"
 set -u
 mkdir -p "${cache_root}/runtime-home" "${cache_root}/pip" "${cache_root}/tmp" "${cache_root}/xdg" "${cache_root}/python-userbase"
 export HOME="${cache_root}/runtime-home"

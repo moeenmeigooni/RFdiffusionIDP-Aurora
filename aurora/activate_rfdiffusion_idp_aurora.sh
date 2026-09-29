@@ -6,8 +6,9 @@ if [[ "${BASH_SOURCE[0]}" == "${0}" ]]; then
     exit 2
 fi
 
+frameworks_module="${AURORA_FRAMEWORKS_MODULE:-frameworks}"
 set +u
-module load frameworks/2025.3.1
+module load "${frameworks_module}"
 set -u
 
 rfd_project_root="${AURORA_PROJECT_ROOT:-/lus/flare/projects/FRAME-IDP/${USER:-${LOGNAME:-user}}}"

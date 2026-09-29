@@ -23,8 +23,10 @@ SE(3)-Transformer.  DGL does not provide an Aurora/PyTorch-XPU graph backend.
 This port retains the model architecture and weights, but replaces only the
 inference graph primitives with native PyTorch operations: directed graph
 construction, destination-normalized edge softmax, edge-to-node sum, and
-edge/node dot product.  These operate on `torch.xpu` with Aurora's
-`frameworks/2025.3.1` module.  The inference device selection is XPU first,
+edge/node dot product. These operate on `torch.xpu` with Aurora's default
+`frameworks` module (currently `frameworks/2026.1.0` on Aurora). Set
+`AURORA_FRAMEWORKS_MODULE` to select another site-supported module. The
+inference device selection is XPU first,
 then CUDA, then CPU; the NVIDIA NVTX profiling ranges are no-ops on XPU.
 Although IPEX is available in the framework, this inference port deliberately
 uses native PyTorch XPU without importing IPEX: IPEX's TorchScript fusion pass
