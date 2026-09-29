@@ -32,6 +32,7 @@ export XDG_CACHE_HOME="${cache_root}/xdg"
 test -x "${env_root}/bin/python" || python -m venv --system-site-packages "${env_root}"
 source "${env_root}/bin/activate"
 python -m pip install --no-cache-dir e3nn==0.3.3 opt-einsum pyrsistent
+python -m pip install --no-cache-dir -r "${script_dir}/requirements-aurora.txt"
 python -m pip install --no-deps -e "${repo_root}/env/SE3Transformer"
 python -m pip install --no-deps -e "${repo_root}"
 
