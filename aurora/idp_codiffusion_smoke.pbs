@@ -1,0 +1,60 @@
+#!/bin/bash -l
+#PBS -N rfdiffusion-idp-xpu
+#PBS -A FRAME-IDP
+#PBS -q debug
+#PBS -l select=1
+#PBS -l walltime=00:30:00
+#PBS -l filesystems=flare
+#PBS -j oe
+
+set -euo pipefail
+
+repo="${RFDIFFUSION_IDP_REPO:-${PBS_O_WORKDIR:-$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")/.." && pwd)}}"
+project_root="${AURORA_PROJECT_ROOT:-/lus/flare/projects/FRAME-IDP/${USER:-${LOGNAME:-user}}}"
+run_base=${RFDIFFUSION_IDP_SMOKE_OUTPUT:-${project_root}/runs/rfdiffusion-idp-xpu-smoke}
+run_root="${run_base}/${PBS_JOBID:-manual-$(date +%Y%m%d-%H%M%S)}"
+export ZE_FLAT_DEVICE_HIERARCHY=FLAT
+export ZE_AFFINITY_MASK="${ZE_AFFINITY_MASK:-0}"
+
+source "${repo}/aurora/activate_rfdiffusion_idp_aurora.sh"
+cd "${repo}"
+mkdir -p "${run_root}"
+
+python -u aurora/xpu_graph_smoke.py
+
+# Paper protocol 1: sequence-input co-diffusion. The target segment and binder
+# are both diffused; this bounded job uses RFdiffusion's legal minimum 15-step
+# schedule but evaluates only its first two reverse steps solely as a port test.
+python -u scripts/run_inference.py \
+    inference.output_prefix="${run_root}/sequence_input/design" \
+    inference.input_pdb=examples/input_pdbs/3IOL.pdb \
+    'contigmap.contigs=[B10-35/0 70-70]' \
+    'ppi.hotspot_res=[B28,B29]' \
+    inference.num_designs=1 \
+    'contigmap.inpaint_str=[B10-35]' \
+    diffuser.T=15 inference.final_step=14 inference.deterministic=True inference.write_trajectory=False
+
+# Paper protocol 2: secondary-structure-conditioned sequence input. This loads
+# InpaintSeq_Fold_ckpt.pt, the paper's strand/helix-biased companion checkpoint.
+python -u scripts/run_inference.py \
+    inference.output_prefix="${run_root}/secondary_structure/design" \
+    inference.input_pdb=examples/input_pdbs/tau_peptide.pdb \
+    'contigmap.contigs=[70-70/0 B165-178]' \
+    inference.num_designs=1 \
+    'contigmap.inpaint_str=[B165-178]' \
+    scaffoldguided.scaffoldguided=True \
+    'contigmap.inpaint_str_helix=[B165-178]' \
+    diffuser.T=15 inference.final_step=14 inference.deterministic=True inference.write_trajectory=False
+
+# Paper protocol 3: two-sided partial diffusion with a fixed target sequence.
+python -u scripts/run_inference.py \
+    inference.output_prefix="${run_root}/two_sided_partial/design" \
+    inference.input_pdb=examples/input_pdbs/peptide_complex_ideal_helix.pdb \
+    'contigmap.contigs=["172-172/0 34-34"]' \
+    diffuser.T=15 diffuser.partial_T=1 inference.final_step=0 inference.num_designs=1 \
+    'contigmap.provide_seq=[172-205]' inference.deterministic=True inference.write_trajectory=False
+
+test -s "${run_root}/sequence_input/design_0.pdb"
+test -s "${run_root}/secondary_structure/design_0.pdb"
+test -s "${run_root}/two_sided_partial/design_0.pdb"
+echo "RFdiffusion IDP XPU co-diffusion smoke passed: ${run_root}"
