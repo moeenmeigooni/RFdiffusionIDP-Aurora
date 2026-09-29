@@ -6,6 +6,24 @@ This repository includes the RFdiffusion IDP co-diffusion port for Aurora
 Intel XPU accelerators. Follow [`aurora/README.md`](aurora/README.md) for the
 Aurora installer and end-to-end run instructions.
 
+## Quick installation on Aurora
+
+Run these commands on an Aurora login node. Keep the checkout and environment
+on shared project storage; change `FRAME-IDP` if your allocation uses another
+project directory. `--weights` downloads and verifies both model checkpoints.
+
+```bash
+export AURORA_PROJECT_ROOT="/lus/flare/projects/FRAME-IDP/${USER}"
+mkdir -p "$AURORA_PROJECT_ROOT"
+cd "$AURORA_PROJECT_ROOT"
+git clone https://github.com/moeenmeigooni/RFdiffusionIDP-Aurora.git
+cd RFdiffusionIDP-Aurora
+bash aurora/bootstrap_aurora.sh --weights
+```
+
+For the three-mode XPU smoke job and a bounded design example, see
+[Aurora setup and run instructions](aurora/README.md).
+
 <!--
 <img width="1115" alt="Screen Shot 2023-01-19 at 5 56 33 PM" src="https://user-images.githubusercontent.com/56419265/213588200-f8f44dba-276e-4dd2-b844-15acc441458d.png">
 -->
@@ -537,4 +555,3 @@ Now, let's go make some proteins. Have fun!
 
 RFdiffusion builds directly on the architecture and trained parameters of RoseTTAFold. We therefore thank Frank DiMaio and Minkyung Baek, who developed RoseTTAFold.
 RFdiffusion is released under an open source BSD License (see LICENSE file). It is free for both non-profit and for-profit use. 
-
